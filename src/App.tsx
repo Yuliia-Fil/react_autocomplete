@@ -12,7 +12,7 @@ export const App: React.FC = () => {
 
   const newQuery = debounce((str: string) => {
     const filteredPeople = peopleFromServer.filter(p =>
-      p.name.toLowerCase().includes(str),
+      p.name.toLowerCase().includes(str.toLowerCase()),
     );
 
     setPeople(filteredPeople);
@@ -22,7 +22,7 @@ export const App: React.FC = () => {
     event: React.ChangeEvent<HTMLInputElement>,
   ): void {
     setInputValue(event.target.value);
-    newQuery(event.target.value.toLowerCase());
+    newQuery(event.target.value);
     setTitle('No selected person');
   }
 
