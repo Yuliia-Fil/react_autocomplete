@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import './App.scss';
 import { peopleFromServer } from './data/people';
 import { Autocomplete } from './components/Autocomplete';
+import debounce from 'lodash.debounce';
 
 export const App: React.FC = () => {
   const [people, setPeople] = useState(peopleFromServer);
@@ -9,17 +10,23 @@ export const App: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [title, setTitle] = useState('No selected person');
 
+  const newQuery = useCallback(
+    debounce((str: string) => {
+      const filteredPeople = peopleFromServer.filter(p =>
+        p.name.toLowerCase().includes(str),
+      );
+
+      setPeople(filteredPeople);
+    }, 300),
+    [],
+  );
+
   function inputChangeHandler(
     event: React.ChangeEvent<HTMLInputElement>,
   ): void {
     setInputValue(event.target.value);
+    newQuery(event.target.value.toLowerCase());
     setTitle('No selected person');
-    const lowValue = event.target.value.toLowerCase();
-    const filteredPeople = peopleFromServer.filter(p =>
-      p.name.toLowerCase().includes(lowValue),
-    );
-
-    setPeople(filteredPeople);
   }
 
   return (
